@@ -17,16 +17,16 @@ public class Bishop extends AbstractPiece {
     public List<TempMove> getTempMoves() {
         List<TempMove> tempMoves = new ArrayList<>();
         for (int i = 1; i < 7; i++) {
-            tempMoves.add(new TempMove(i, i));
-            tempMoves.add(new TempMove(-i, -i));
-            tempMoves.add(new TempMove(-i, i));
-            tempMoves.add(new TempMove(i, -i));
+            tempMoves.add(new TempMove(i, i, new Position(1, 1)));
+            tempMoves.add(new TempMove(-i, -i, new Position(-1, -1)));
+            tempMoves.add(new TempMove(-i, i, new Position(-1, 1)));
+            tempMoves.add(new TempMove(i, -i, new Position(1, -1)));
         }
         return tempMoves;
     }
 
     @Override
-    public Image getImage() {
-        return null;
+    public Character getImage() {
+        return 'B';
     }
 }

@@ -29,7 +29,7 @@ public class Knight extends AbstractPiece {
     }
 
     @Override
-    public Image getImage() {
-        return null;
+    public Character getImage() {
+        return 'N';
     }
 }

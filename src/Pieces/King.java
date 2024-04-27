@@ -30,7 +30,7 @@ public class King extends AbstractPiece {
     }
 
     @Override
-    public Image getImage() {
-        return null;
+    public Character getImage() {
+        return 'K';
     }
 }

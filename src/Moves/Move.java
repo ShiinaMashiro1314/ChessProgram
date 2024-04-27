@@ -10,4 +10,5 @@ public class Move {
     public Piece piece;
     public Position startPosition;
     public Position endPosition;
+    public Position direction;
 }

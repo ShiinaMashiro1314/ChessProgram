@@ -18,6 +18,7 @@ public abstract class AbstractPiece implements Piece {
                 .startPosition(position)
                 .endPosition(new Position(position.row + tempMove.rowIncrement,
                         position.col + tempMove.colIncrement))
+                .direction(tempMove.direction)
                 .build();
     }
 

@@ -1,5 +1,9 @@
 import Pieces.Piece;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Square {
     public Piece piece;
     public Integer row;

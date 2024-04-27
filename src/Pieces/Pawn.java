@@ -9,7 +9,7 @@ public abstract class Pawn extends AbstractPiece {
     }
 
     @Override
-    public Image getImage() {
-        return null;
+    public Character getImage() {
+        return 'P';
     }
 }

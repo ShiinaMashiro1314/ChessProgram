@@ -12,7 +12,7 @@ public interface Piece {
 
     public boolean isBlockable();
 
-    public Image getImage();
+    public Character getImage();
 
     public Position getPosition();
 
