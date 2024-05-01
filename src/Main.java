@@ -15,15 +15,16 @@ public class Main {
         boolean isWhiteMove = true;
 
         Scanner s = new Scanner(System.in);
-        String pattern = "[PRBKNQ] [1-8] [1-8] [1-8] [1-8]";
+        String pattern = "[PRBKNQ] [A-H][1-8] [A-H][1-8]";
 
+        System.out.println('C' - 'A');
         while (true) {
             if (isWhiteMove) {
                 System.out.println("White's turn to move!");
             } else {
                 System.out.println("Black's turn to move!");
             }
-            System.out.println("Enter your move in the format: Piece, startRow, startCol, endRow, endCol");
+            System.out.println("Enter your move in the format: Piece startPosition endPosition: " + pattern);
             String line = s.nextLine();
             if (line.matches(pattern)) {
                 String[] input = line.split(" ");

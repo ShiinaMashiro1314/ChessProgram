@@ -5,9 +5,20 @@ import Pieces.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Board {
-    public Square[][] board = new Square[8][8];
-    public Set<Piece> allPieces = new HashSet<>();
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+public class Board extends Application {
+    private final Square[][] board = new Square[8][8];
+    private final Set<Piece> allWhitePieces = new HashSet<>();
+    private final Set<Piece> allBlackPieces = new HashSet<>();
+    private Integer enPassantCol = null;
+    private boolean madeEnPassant = false;
+
     public Board() {
         // Create all squares
         for (int i = 0; i < 8; i++) {
@@ -34,14 +45,35 @@ public class Board {
             board[row][3].addPiece(new Queen(isWhite, row, 3));
             board[row][4].addPiece(new King(isWhite, row, 4));
         }
+
+        for (int i = 0; i < 8; i++) {
+            allWhitePieces.add(board[0][i].getPiece());
+            allWhitePieces.add(board[1][i].getPiece());
+            allBlackPieces.add(board[6][i].getPiece());
+            allBlackPieces.add(board[7][i].getPiece());
+        }
     }
 
+    @Override
+    public void start(Stage stage) throws Exception {
+
+    }
+
+    // Converts input string position to actual position. i.e C1 to 0, 2
+    private Position stringToPosition(String str) {
+        return new Position(str.charAt(1) - '1', str.charAt(0) - 'A');
+    }
+
+    // TODO: Implement castle
     public boolean checkInput(String[] input, boolean isWhite) {
         Character piece = input[0].charAt(0);
-        Position startPosition = new Position(Integer.valueOf(input[1]) - 1,
-                Integer.valueOf(input[2]) - 1);
-        Position endPosition = new Position(Integer.valueOf(input[3]) - 1,
-                Integer.valueOf(input[4]) - 1);
+        String start = input[1];
+        String end = input[2];
+        System.out.println(start);
+        Position startPosition = stringToPosition(start);
+        System.out.println(startPosition.row);
+        System.out.println(startPosition.col);
+        Position endPosition = stringToPosition(end);
         Piece startPiece = getPiece(startPosition);
 
         if (startPiece != null && startPiece.getImage() == piece && startPiece.isWhite() == isWhite) {
@@ -92,6 +124,17 @@ public class Board {
 
         // For Pawn, check for takes
         if (movingPiece.getImage() == 'P' && endPosition.col != startPosition.col) {
+            // en Passant check
+            if (enPassantCol != null && endPosition.col == enPassantCol) {
+                if (movingPiece.isWhite() && endPosition.row == 5) {
+                    madeEnPassant = true;
+                    return true;
+                }
+                if (!movingPiece.isWhite() && endPosition.row == 3) {
+                    madeEnPassant = true;
+                    return true;
+                }
+            }
             return checkDifferentColor(pieceOnEndPosition, movingPiece.isWhite());
         }
 
@@ -109,8 +152,11 @@ public class Board {
                 }
             }
         }
-        // TODO: How to check for checks?
         return true;
+    }
+
+    private boolean underCheckAfterMove(Move move) {
+        return false;
     }
 
     private boolean checkSameColor(Piece pieceOnEndPosition, boolean isWhite) {
@@ -124,7 +170,28 @@ public class Board {
     private void makeMove(Move move) {
         move.getPiece().updatePosition(move.endPosition);
         board[move.startPosition.row][move.startPosition.col].removePiece();
+        Piece endPiece = board[move.endPosition.row][move.endPosition.col].getPiece();
+        if (endPiece != null) {
+            if (endPiece.isWhite()) {
+                allWhitePieces.remove(endPiece);
+            } else {
+                allBlackPieces.remove(endPiece);
+            }
+        }
         board[move.endPosition.row][move.endPosition.col].addPiece(move.getPiece());
+        // update for en passant
+        // TODO: add verification
+        if (madeEnPassant) {
+            if (move.piece.isWhite()) {
+                allBlackPieces.remove(board[5][enPassantCol].getPiece());
+                board[5][enPassantCol].removePiece();
+            } else {
+                allWhitePieces.remove(board[2][enPassantCol].getPiece());
+                board[2][enPassantCol].removePiece();
+            }
+            madeEnPassant = false;
+        }
+        enPassantViableCheck(move);
     }
 
     public void drawBoard() {
@@ -135,6 +202,21 @@ public class Board {
                 drawSquare(board[i][j]);
             }
             System.out.println();
+        }
+        System.out.print("    ");
+        for (char i = 'A'; i <= 'H'; i++) {
+            System.out.print(" " + i + " ");
+        }
+        System.out.println();
+    }
+
+    private void enPassantViableCheck(Move move) {
+        if (move.getPiece() instanceof Pawn) {
+            if (Math.abs(move.endPosition.row - move.startPosition.row) == 2) {
+                enPassantCol = move.startPosition.col;
+            }
+        } else {
+            enPassantCol = null;
         }
     }
 
